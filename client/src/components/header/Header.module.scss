@@ -1,0 +1,125 @@
+.header {
+  background-color: #484283;
+  color: white;
+  position: sticky;
+  top: 0;
+
+  z-index: 20;
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  .logo {
+    max-width: 118px;
+  }
+  .account {
+    max-width: 46px;
+  }
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: clamp(8px, 2vw, 10px);
+
+    font-size: clamp(12px, 1.5vw, 14px);
+  }
+
+  .right {
+    display: flex;
+    gap: 20px;
+  }
+
+  .content {
+    display: flex;
+    gap: clamp(16px, 3vw, 40px);
+  }
+
+  .logo {
+    cursor: pointer;
+    font-size: clamp(24px, 5vw, 30px);
+    font-weight: 700;
+  }
+
+  .list {
+    display: flex;
+    gap: clamp(16px, 3vw, 40px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: #484283;
+      transform: translateY(-100%);
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    &.open {
+      z-index: 15;
+      padding: 20px;
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  .link {
+    cursor: pointer;
+    font-size: clamp(12px, 2vw, 16px);
+    font-weight: 400;
+    text-decoration: none;
+    color: white;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .basket {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    span {
+      position: absolute;
+      bottom: -6px;
+      right: -6px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #f14f4f;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+  }
+
+  .burger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+
+    @media (max-width: 768px) {
+      display: flex;
+    }
+
+    img {
+      width: 24px;
+      aspect-ratio: 1;
+    }
+  }
+}

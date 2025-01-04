@@ -1,0 +1,36 @@
+.card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 360px;
+  height: 420px;
+}
+.img {
+  aspect-ratio: 1.5;
+  width: 100%;
+  max-width: 100%;
+}
+.address {
+  font-size: 18px;
+}
+.title {
+  font-size: 24px;
+  font-weight: 600;
+}
+.link {
+  font-size: 20px;
+  font-weight: 600;
+  border: 1px solid #484283;
+  padding: 12px 22px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  &:hover {
+    background-color: #484283;
+    color: white;
+  }
+}
