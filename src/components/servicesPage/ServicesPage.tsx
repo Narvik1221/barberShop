@@ -59,7 +59,9 @@ export const ServicesPage: React.FC = () => {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>Услуги салона</h2>
-      <Button onClick={() => setShowAddModal(true)}>Добавить услугу</Button>
+      <Button className={styles.btn} onClick={() => setShowAddModal(true)}>
+        Добавить услугу
+      </Button>
       {loading ? (
         <p>Загрузка услуг...</p>
       ) : services.length === 0 ? (

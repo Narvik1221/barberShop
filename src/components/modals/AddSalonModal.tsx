@@ -80,18 +80,21 @@ export const AddSalonModal: React.FC<Props> = ({ onClose, onCreated }) => {
     <Modal onClose={onClose}>
       <h3>Добавить салон</h3>
       <input
+        className={styles.input}
         name="name"
         value={formData.name}
         onChange={handleChange}
         placeholder="Название"
       />
       <input
+        className={styles.input}
         name="address"
         value={formData.address}
         onChange={handleChange}
         placeholder="Адрес"
       />
       <textarea
+        className={styles.input}
         name="description"
         value={formData.description}
         onChange={handleChange}

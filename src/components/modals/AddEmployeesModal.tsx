@@ -68,17 +68,16 @@ export const AddEmployeesModal: React.FC<Props> = ({ salonId, onClose }) => {
         {employees.length > 0 ? (
           employees.map((emp) => (
             <li key={emp.id} className={styles.employeeItem}>
-              <label>
+              <label className={styles.label}>
                 <input
                   type="checkbox"
                   checked={selectedIds.includes(emp.id)}
                   onChange={() => toggleSelect(emp.id)}
                   disabled={emp.assigned}
                 />
-                {emp.name} {emp.surname} ({emp.email}){" "}
-                {emp.assigned && (
-                  <span className={styles.assigned}>(уже прикреплён)</span>
-                )}
+                <div className={styles.label_text}>
+                  {emp.name} {emp.surname}
+                </div>
               </label>
             </li>
           ))

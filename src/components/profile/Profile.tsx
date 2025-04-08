@@ -142,8 +142,9 @@ const Profile: React.FC = () => {
                     <p>
                       <strong>Время:</strong> {appointment.time}
                     </p>
-                    {/* Если клиент может удалять свою запись, можно добавить кнопку удаления */}
+
                     <Button
+                      className={styles.delete}
                       onClick={() => handleDeleteAppointment(appointment.id)}
                       myType="delete"
                     >

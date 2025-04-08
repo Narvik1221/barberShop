@@ -103,3 +103,16 @@
   height: 300px;
   margin: 1rem 0;
 }
+.input {
+  margin-bottom: 20px;
+}
+.label {
+  display: flex;
+
+  align-items: center;
+  gap: 6px;
+}
+.label_text {
+  flex: 1;
+  font-size: 18px;
+}
