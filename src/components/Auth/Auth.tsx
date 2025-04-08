@@ -1,25 +1,36 @@
-import React, { useState } from "react";
+// src/components/Auth/Auth.tsx
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import styles from "./Auth.module.scss";
 import { register, login } from "../../api/authApi";
 import { useNavigate } from "react-router-dom";
-const Auth = () => {
-  const [isRegister, setIsRegister] = useState(false);
-  const [formData, setFormData] = useState({
+import { Button } from "../Button/Button";
+
+interface AuthFormData {
+  email: string;
+  password: string;
+  surname: string;
+  name: string;
+}
+
+const Auth: React.FC = () => {
+  const [isRegister, setIsRegister] = useState<boolean>(false);
+  const [formData, setFormData] = useState<AuthFormData>({
     email: "",
     password: "",
     surname: "",
     name: "",
   });
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
-  const handleChange = (e) => {
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       if (isRegister) {
@@ -31,12 +42,12 @@ const Auth = () => {
           password: formData.password,
         });
         setMessage("Вы вошли в систему!");
-        localStorage.setItem("token", data.token); // Сохраняем токен
-        localStorage.setItem("mail", formData.email); // Сохраняем токен
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("mail", formData.email);
         navigate("/profile");
       }
-      setFormData({ email: "", password: "", surname: "", name: "" }); // Очистка формы
-    } catch (error) {
+      setFormData({ email: "", password: "", surname: "", name: "" });
+    } catch (error: any) {
       setMessage(error.error || "Произошла ошибка!");
     }
   };
@@ -83,13 +94,13 @@ const Auth = () => {
             onChange={handleChange}
             required
           />
-          <button type="submit">
+          <Button className={styles.reg} type="submit">
             {isRegister ? "Зарегистрироваться" : "Войти"}
-          </button>
+          </Button>
         </form>
         <p>
           {isRegister ? "Уже есть аккаунт?" : "Нет аккаунта?"}{" "}
-          <button
+          <Button
             type="button"
             className={styles.switch}
             onClick={() => {
@@ -98,7 +109,7 @@ const Auth = () => {
             }}
           >
             {isRegister ? "Войти" : "Зарегистрироваться"}
-          </button>
+          </Button>
         </p>
       </div>
     </div>

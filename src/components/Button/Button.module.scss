@@ -1,0 +1,28 @@
+.button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+  max-width: fit-content;
+  min-width: 200px;
+}
+
+.default {
+  background-color: #484283;
+  color: white;
+
+  &:hover {
+    background-color: #353069;
+  }
+}
+
+.delete {
+  background-color: #a62323;
+  color: white;
+
+  &:hover {
+    background-color: #8b1b1b;
+  }
+}
