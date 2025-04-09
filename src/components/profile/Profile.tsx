@@ -30,10 +30,11 @@ const Profile: React.FC = () => {
         }
         // Обновляем данные контекста (user, appointments и clientAppointments)
         await refreshUser();
-        console.log(user);
-        if (user && user?.role === "employee") {
+        console.log(user?.salon_id);
+        console.log(user?.salon_id && user?.role === "employee");
+        if (user?.salon_id && user?.role === "employee") {
           const response = await getSalonById(user?.salon_id);
-          console.log(response);
+
           setSalon(response);
         }
       } catch (error) {
@@ -45,8 +46,9 @@ const Profile: React.FC = () => {
     fetchUserData();
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("token");
+    await refreshUser();
     navigate("/auth");
   };
 
@@ -102,7 +104,7 @@ const Profile: React.FC = () => {
         </div>
 
         {/* Блок для сотрудников */}
-        {user.role === "employee" && salon && (
+        {user.role === "employee" && salon ? (
           <div className={styles.card}>
             <h2 className={styles.title}>Мой салон</h2>
             <img
@@ -113,6 +115,10 @@ const Profile: React.FC = () => {
             <h3 className={styles.title}>{salon?.name}</h3>
             <p className={styles.address}>{salon?.address}</p>
             <h3 className={styles.title}>{salon?.description}</h3>
+          </div>
+        ) : (
+          <div className={styles.title}>
+            Администратор пока не прикрепил вас к салону
           </div>
         )}
 

@@ -22,14 +22,7 @@ function App() {
           <Header />
           <main className="main">
             <Routes>
-              <Route
-                path="/dashboard/client"
-                element={
-                  <ProtectedRoute allowedRoles={["client"]}>
-                    <SalonList />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/dashboard/client" element={<SalonList />} />
               <Route
                 path="/dashboard/admin"
                 element={

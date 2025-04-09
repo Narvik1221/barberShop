@@ -58,6 +58,7 @@ export const AuthProvider = ({ children }: Props) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
+        setUser(null);
         setIsLoading(false);
         return;
       }
