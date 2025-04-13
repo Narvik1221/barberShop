@@ -1,0 +1,20 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" fill="none"/>
+  <g fill="white">
+    <!-- Лезвия ножниц -->
+    <path d="M150 130 L180 80 Q185 75 190 80 L195 85 Q200 90 195 95 L160 130 Z" />
+    <path d="M150 130 L120 80 Q115 75 110 80 L105 85 Q100 90 105 95 L140 130 Z" />
+    
+    <!-- Ручки ножниц -->
+    <circle cx="100" cy="180" r="20" stroke="white" stroke-width="4" fill="none"/>
+    <circle cx="200" cy="180" r="20" stroke="white" stroke-width="4" fill="none"/>
+    
+    <!-- Соединение -->
+    <circle cx="150" cy="130" r="6" fill="white"/>
+    
+    <!-- Надпись -->
+    <text x="150" y="250" text-anchor="middle" fill="white" font-size="20" font-family="Arial, sans-serif" font-weight="bold">
+      BEAUTY SALON
+    </text>
+  </g>
+</svg>
