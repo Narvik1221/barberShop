@@ -1,29 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AddServiceModal } from "../modals/AddServiceModal";
 import { EditServiceModal } from "../modals/EditServiceModal";
 import styles from "./ServicesPage.module.scss";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../Button/Button";
+import { AuthContext } from "../../context/AuthContext";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-interface Service {
+interface Employee {
   id: number;
-  salon_id: number;
   name: string;
-  description: string;
-  price: number;
+  surname: string;
 }
 
+interface Service {
+  service_id: number;
+  salon_id: number;
+  service_name: string;
+  description: string;
+  price: number;
+  employees: Employee[];
+}
 export const ServicesPage: React.FC = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [editService, setEditService] = useState<Service | null>(null);
-  const { salonId } = useParams();
+  const [editService, setEditService] = useState<Service | any>(null);
+  const { salonId } = useParams() as any;
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   useEffect(() => {
-    console.log(salonId);
+    if (salonId != user?.salon_id && user?.role == "salon_admin") {
+      navigate("/profile");
+    }
+  }, []);
+  useEffect(() => {
     fetchServices();
   }, [salonId]);
 
@@ -69,18 +82,42 @@ export const ServicesPage: React.FC = () => {
       ) : (
         <ul className={styles.serviceList}>
           {services.map((service) => (
-            <li key={service.id} className={styles.serviceItem}>
+            <li key={service.service_id} className={styles.serviceItem}>
               <div>
-                <strong>{service.name}</strong> – {service.description} (
-                {service.price} руб.)
+                <strong>{service.service_name}</strong> – {service.description}{" "}
+                ({service.price} руб.)
               </div>
+              <div>
+                {service.employees?.length > 0 && (
+                  <div className={styles.employee}>
+                    Мастера:{" "}
+                    {service.employees.map((emp) => (
+                      <div>
+                        {emp.name} {emp.surname}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className={styles.btns}>
-                <Button onClick={() => setEditService(service)}>
+                <Button
+                  onClick={() =>
+                    setEditService({
+                      id: service.service_id,
+                      salon_id: service.salon_id,
+                      name: service.service_name,
+                      description: service.description,
+                      price: service.price,
+                      employees: service.employees,
+                    })
+                  }
+                >
                   Изменить
                 </Button>
                 <Button
                   myType="delete"
-                  onClick={() => handleDeleteService(service.id)}
+                  onClick={() => handleDeleteService(service.service_id)}
                 >
                   Удалить
                 </Button>

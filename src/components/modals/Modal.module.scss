@@ -86,9 +86,15 @@
   font-size: 0.95rem;
   display: flex;
   align-items: center;
+  & > label {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
 }
 
 .employeeItem input[type="checkbox"] {
+  max-width: 20px;
   margin-right: 8px;
 }
 
@@ -113,6 +119,51 @@
   gap: 6px;
 }
 .label_text {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   font-size: 18px;
+}
+.selectedList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.selectedItem {
+  background-color: #e0e0e0;
+  padding: 5px 10px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  color: #ff3333;
+  font-size: 16px;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+.employeeList {
+  list-style: none;
+  padding-left: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.employeeItem {
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.employeeItem:hover {
+  background-color: #f0f0f0;
 }

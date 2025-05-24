@@ -9,8 +9,9 @@ interface FormData {
   password: string;
   name: string;
   surname: string;
-  role: "employee" | "admin";
+  role: "employee" | "admin" | "salon_admin";
   registrationCode: string;
+  patronymic: string;
 }
 
 const AdminAuth: React.FC = () => {
@@ -22,6 +23,7 @@ const AdminAuth: React.FC = () => {
     surname: "",
     role: "employee",
     registrationCode: "",
+    patronymic: "",
   });
   const [message, setMessage] = useState<string>("");
   const navigate = useNavigate();
@@ -83,6 +85,14 @@ const AdminAuth: React.FC = () => {
                 onChange={handleChange}
                 required
               />
+              <input
+                type="text"
+                name="patronymic"
+                placeholder="Отчество"
+                value={formData.patronymic}
+                onChange={handleChange}
+                required
+              />
               <select
                 name="role"
                 value={formData.role}
@@ -91,6 +101,7 @@ const AdminAuth: React.FC = () => {
               >
                 <option value="employee">Сотрудник</option>
                 <option value="admin">Администратор</option>
+                <option value="salon_admin">Администратор салона</option>
               </select>
               <input
                 type="text"
@@ -98,6 +109,8 @@ const AdminAuth: React.FC = () => {
                 placeholder={
                   formData.role === "admin"
                     ? "Секретный код для администратора"
+                    : formData.role === "salon_admin"
+                    ? "Секретный код для администратора салона"
                     : "Секретный код для сотрудника"
                 }
                 value={formData.registrationCode}

@@ -16,7 +16,7 @@ interface EmployeeRegisterPayload {
   password: string;
   name: string;
   surname: string;
-  role: "employee" | "admin";
+  role: "employee" | "admin" | "salon_admin";
   registrationCode: string;
 }
 

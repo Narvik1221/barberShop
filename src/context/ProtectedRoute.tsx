@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 interface ProtectedRouteProps {
-  allowedRoles: ("employee" | "admin" | "client")[];
+  allowedRoles: ("employee" | "admin" | "client" | "salon_admin")[];
   children: JSX.Element;
 }
 

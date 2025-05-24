@@ -7,10 +7,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 export interface User {
   id: number;
   name: string;
+  patronymic?: string;
   surname: string;
   email: string;
   salon_id?: any;
-  role: "employee" | "admin" | "client";
+  role: "employee" | "admin" | "client" | "salon_admin";
 }
 
 export interface Appointment {

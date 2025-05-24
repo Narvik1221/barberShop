@@ -8,9 +8,12 @@ import { AuthContext } from "../../context/AuthContext";
 
 const BarbershopHeader = () => {
   const { user } = useContext(AuthContext);
-  console.log("header user", user);
-  // Если данных о пользователе ещё нет, можно вывести загрузочный индикатор или задать значение по умолчанию.
-  const dashboardPath = user ? `/dashboard/${user.role}` : `/dashboard/client`;
+
+  const userAdminSalonId =
+    user?.role == "salon_admin" ? "/" + user?.salon_id : "";
+  const dashboardPath = user
+    ? `/dashboard/${user.role}${userAdminSalonId}`
+    : `/dashboard/client`;
   const authPath = user ? "/profile" : "/auth";
 
   return (

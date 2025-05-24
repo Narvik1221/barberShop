@@ -32,6 +32,14 @@ function App() {
                 }
               />
               <Route
+                path="/dashboard/salon_admin/:id"
+                element={
+                  <ProtectedRoute allowedRoles={["admin", "salon_admin"]}>
+                    <AdminSalonDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/dashboard/employee"
                 element={
                   <ProtectedRoute allowedRoles={["employee"]}>
@@ -48,7 +56,7 @@ function App() {
               <Route
                 path="/admin/salons/:salonId/services"
                 element={
-                  <ProtectedRoute allowedRoles={["admin"]}>
+                  <ProtectedRoute allowedRoles={["admin", "salon_admin"]}>
                     <ServicesPage />
                   </ProtectedRoute>
                 }
@@ -56,7 +64,7 @@ function App() {
               <Route
                 path="/admin/salons/:id"
                 element={
-                  <ProtectedRoute allowedRoles={["admin"]}>
+                  <ProtectedRoute allowedRoles={["admin", "salon_admin"]}>
                     <AdminSalonDetail />
                   </ProtectedRoute>
                 }

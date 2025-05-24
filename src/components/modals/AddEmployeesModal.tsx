@@ -1,4 +1,3 @@
-// components/AddEmployeesModal.tsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "./Modal";
@@ -16,6 +15,7 @@ interface Employee {
   id: number;
   name: string;
   surname: string;
+  patronymic: string;
   email: string;
   assigned: boolean;
 }
@@ -76,7 +76,8 @@ export const AddEmployeesModal: React.FC<Props> = ({ salonId, onClose }) => {
                   disabled={emp.assigned}
                 />
                 <div className={styles.label_text}>
-                  {emp.name} {emp.surname}
+                  {emp.name} <br /> {emp.surname} <br />
+                  {emp.patronymic}
                 </div>
               </label>
             </li>

@@ -28,11 +28,15 @@ export const getServicesBySalon = async (salonId: string) => {
   return response.data;
 };
 
-// Дополнительно: получение списка сотрудников данного салона, оказывающих выбранную услугу.
-// Предполагается, что бекенд реализует этот маршрут (например, /api/salons/:salonId/employees?service_id=...)
-export const getEmployeesBySalonAndService = async (salonId: string) => {
-  const response = await axios.get(
-    `${API_BASE_URL}/api/salons/${salonId}/employees`
+export const getEmployeesBySalonAndService = async (
+  salonId: string,
+  serviceId: string
+) => {
+  const { data } = await axios.get(
+    `${API_BASE_URL}/api/employee/salon-service`,
+    {
+      params: { salonId, serviceId },
+    }
   );
-  return response.data;
+  return data;
 };

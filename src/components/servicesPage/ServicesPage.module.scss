@@ -26,6 +26,9 @@
   padding: 10px;
   align-items: center;
   border-bottom: 1px solid #ccc;
+  & > * {
+    flex: 1 1 33%;
+  }
 }
 .btns {
   display: flex;
@@ -51,4 +54,8 @@
 }
 .btn {
   margin-bottom: 20px;
+}
+.employee {
+  flex-direction: column;
+  gap: 4px;
 }

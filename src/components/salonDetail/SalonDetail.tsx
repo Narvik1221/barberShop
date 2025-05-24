@@ -1,18 +1,32 @@
-// src/components/SalonDetail/SalonDetail.tsx
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  getSalonById,
-  getServicesBySalon,
-  getEmployeesBySalonAndService,
-} from "../../api/salonApi";
+import { getSalonById, getServicesBySalon } from "../../api/salonApi";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "./SalonDetail.module.scss";
 import { Button } from "../Button/Button";
+import { AuthContext } from "../../context/AuthContext";
 
 const SERVER_URL = import.meta.env.VITE_API_BASE_URL;
+
+interface Employee {
+  id: number;
+  name: string;
+  surname: string;
+  employee_id: number;
+  patronymic: string;
+}
+
+interface Service {
+  service_id: number;
+  salon_id: number;
+  employee_id: number;
+  service_name: string;
+  description: string;
+  price: string;
+  employees: Employee[];
+}
 
 interface Salon {
   id: number;
@@ -20,19 +34,6 @@ interface Salon {
   address: string;
   description: string;
   imagesrc: string;
-}
-
-interface Service {
-  id: number;
-  name: string;
-  description: string;
-  price: string;
-}
-
-interface Employee {
-  employee_id: number;
-  name: string;
-  surname: string;
 }
 
 interface BookingSlot {
@@ -45,13 +46,16 @@ const SalonDetail = () => {
   const navigate = useNavigate();
   const [salon, setSalon] = useState<Salon | null>(null);
   const [services, setServices] = useState<Service[]>([]);
-  const [selectedService, setSelectedService] = useState<string>("");
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [selectedEmployee, setSelectedEmployee] = useState<string>("");
+  const [selectedServiceId, setSelectedServiceId] = useState<string>("");
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [bookedSlots, setBookedSlots] = useState<BookingSlot[]>([]);
   const [error, setError] = useState("");
+
+  const selectedService = services.find(
+    (s) => s.service_id.toString() === selectedServiceId
+  );
 
   useEffect(() => {
     if (id) {
@@ -60,20 +64,11 @@ const SalonDetail = () => {
     }
   }, [id]);
 
-  // После выбора услуги получаем сотрудников, оказывающих эту услугу в салоне
   useEffect(() => {
-    if (id) {
-      getEmployeesBySalonAndService(id).then(setEmployees);
+    if (selectedEmployeeId) {
+      fetchBookedSlots(selectedEmployeeId);
     }
-  }, [id]);
-
-  // При выборе сотрудника получаем занятые слоты
-  useEffect(() => {
-    if (selectedEmployee) {
-      console.log(selectedEmployee);
-      fetchBookedSlots(selectedEmployee);
-    }
-  }, [selectedEmployee]);
+  }, [selectedEmployeeId]);
 
   const fetchBookedSlots = async (employeeId: string) => {
     try {
@@ -95,8 +90,13 @@ const SalonDetail = () => {
       return;
     }
 
-    if (!selectedDate) {
-      setError("Выберите дату");
+    if (
+      !selectedDate ||
+      !selectedTime ||
+      !selectedService ||
+      !selectedEmployeeId
+    ) {
+      setError("Пожалуйста, заполните все поля.");
       return;
     }
 
@@ -104,9 +104,9 @@ const SalonDetail = () => {
       await axios.post(
         `${SERVER_URL}/api/bookings`,
         {
-          employee_id: selectedEmployee,
-          service_id: selectedService,
-          date: selectedDate.toLocaleDateString("en-CA"), // формат YYYY-MM-DD
+          employee_id: selectedEmployeeId,
+          service_id: selectedService.service_id,
+          date: selectedDate.toLocaleDateString("en-CA"),
           time: selectedTime,
         },
         {
@@ -115,9 +115,8 @@ const SalonDetail = () => {
       );
 
       alert("Запись успешно создана!");
-      setSelectedService("");
-      setEmployees([]);
-      setSelectedEmployee("");
+      setSelectedServiceId("");
+      setSelectedEmployeeId("");
       setSelectedDate(null);
       setSelectedTime("");
     } catch (err: any) {
@@ -147,8 +146,7 @@ const SalonDetail = () => {
   ];
 
   const isTimeBooked = (date: Date, time: string) => {
-    const selectedDateStr = date.toISOString().split("T")[0]; // Формат YYYY-MM-DD
-
+    const selectedDateStr = date.toISOString().split("T")[0];
     return bookedSlots.some((slot) => {
       const slotDate = slot.date.split("T")[0];
       const slotTime = slot.time.slice(0, 5);
@@ -158,9 +156,7 @@ const SalonDetail = () => {
 
   const filteredTimeOptions =
     selectedDate &&
-    timeOptions.filter((time) => {
-      return !isTimeBooked(selectedDate, time);
-    });
+    timeOptions.filter((time) => !isTimeBooked(selectedDate, time));
 
   if (!salon) return <p>Загрузка...</p>;
 
@@ -179,32 +175,35 @@ const SalonDetail = () => {
                 <label htmlFor="service">Выберите услугу:</label>
                 <select
                   id="service"
-                  value={selectedService}
-                  onChange={(e) => setSelectedService(e.target.value)}
+                  value={selectedServiceId}
+                  onChange={(e) => {
+                    setSelectedServiceId(e.target.value);
+                    setSelectedEmployeeId("");
+                  }}
                   required
                 >
                   <option value="">-- Выберите услугу --</option>
                   {services.map((service) => (
-                    <option key={service.id} value={service.id}>
-                      {service.name} ({service.price}₽)
+                    <option key={service.service_id} value={service.service_id}>
+                      {service.service_name} ({service.price}₽)
                     </option>
                   ))}
                 </select>
               </div>
 
-              {selectedService && (
+              {selectedService && selectedService.employees.length > 0 && (
                 <div className={styles.field}>
                   <label htmlFor="employee">Выберите специалиста:</label>
                   <select
                     id="employee"
-                    value={selectedEmployee}
-                    onChange={(e) => setSelectedEmployee(e.target.value)}
+                    value={selectedEmployeeId}
+                    onChange={(e) => setSelectedEmployeeId(e.target.value)}
                     required
                   >
                     <option value="">-- Выберите специалиста --</option>
-                    {employees.map((emp) => (
-                      <option key={emp.employee_id} value={emp.employee_id}>
-                        {`${emp.name} ${emp.surname}`}
+                    {selectedService.employees.map((emp) => (
+                      <option key={emp.id} value={emp.employee_id}>
+                        {emp.name} {emp.surname} {emp.patronymic}
                       </option>
                     ))}
                   </select>
@@ -243,11 +242,11 @@ const SalonDetail = () => {
               </div>
 
               {error && <p className={styles.error}>{error}</p>}
-
               <Button type="submit">Записаться</Button>
             </form>
           </div>
         </div>
+
         <div className={styles.card_bottom}>
           <h3 className={styles.title}>{salon.name}</h3>
           <p className={styles.address}>{salon.address}</p>

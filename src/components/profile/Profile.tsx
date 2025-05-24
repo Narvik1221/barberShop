@@ -30,8 +30,7 @@ const Profile: React.FC = () => {
         }
         // Обновляем данные контекста (user, appointments и clientAppointments)
         await refreshUser();
-        console.log(user?.salon_id);
-        console.log(user?.salon_id && user?.role === "employee");
+
         if (user?.salon_id && user?.role === "employee") {
           const response = await getSalonById(user?.salon_id);
 
@@ -95,6 +94,11 @@ const Profile: React.FC = () => {
           <p>
             <strong>Фамилия:</strong> {user.surname}
           </p>
+          {user.patronymic && (
+            <p>
+              <strong>Отчество:</strong> {user.patronymic}
+            </p>
+          )}
           <p>
             <strong>Email:</strong> {user.email}
           </p>
@@ -103,8 +107,7 @@ const Profile: React.FC = () => {
           </p>
         </div>
 
-        {/* Блок для сотрудников */}
-        {user.role === "employee" && salon ? (
+        {(user.role === "employee" || user.role === "salon_admin") && salon && (
           <div className={styles.card}>
             <h2 className={styles.title}>Мой салон</h2>
             <img
@@ -113,14 +116,17 @@ const Profile: React.FC = () => {
               alt={salon?.name}
             />
             <h3 className={styles.title}>{salon?.name}</h3>
+            <h3 className={styles.title}>{salon?.surname}</h3>
             <p className={styles.address}>{salon?.address}</p>
             <h3 className={styles.title}>{salon?.description}</h3>
           </div>
-        ) : (
-          <div className={styles.title}>
-            Администратор пока не прикрепил вас к салону
-          </div>
         )}
+        {(user.role === "employee" || user.role === "salon_admin") &&
+          !salon && (
+            <div className={styles.title}>
+              Администратор пока не прикрепил вас к салону
+            </div>
+          )}
 
         {/* Блок для клиентов */}
         {user.role === "client" && (
