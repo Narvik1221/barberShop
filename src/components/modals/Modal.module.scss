@@ -152,18 +152,44 @@
 .employeeList {
   list-style: none;
   padding-left: 0;
-  max-height: 150px;
+  max-height: 350px;
   overflow-y: auto;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
 .employeeItem {
+  width: 100%;
   padding: 6px 10px;
   cursor: pointer;
   transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 8px;
 }
 
 .employeeItem:hover {
   background-color: #f0f0f0;
+}
+.accordionContent {
+  margin-top: 8px;
+  padding-left: 8px;
+  border-left: 2px solid #007bff;
+  font-size: 0.9rem;
+  color: #333;
+}
+.itemHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.moreInfoBtn {
+  max-width: fit-content !important;
+  width: 100%;
+  min-width: auto;
+  margin: 0 4px;
 }

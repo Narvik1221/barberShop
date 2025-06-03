@@ -1,3 +1,5 @@
+// src/components/EditServiceModal.tsx
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "./Modal";
@@ -11,6 +13,8 @@ interface Employee {
   name: string;
   surname: string;
   patronymic: string;
+  registration_date: string;
+  // Если есть другие поля, их тоже можно тут добавить
 }
 
 interface Service {
@@ -41,6 +45,7 @@ export const EditServiceModal: React.FC<Props> = ({
   );
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(false);
+  const [expandedEmployeeIds, setExpandedEmployeeIds] = useState<number[]>([]);
 
   useEffect(() => {
     fetchEmployees();
@@ -103,9 +108,20 @@ export const EditServiceModal: React.FC<Props> = ({
     setSelectedEmployees((prev) => [...prev, emp]);
   };
 
+  // Переключить состояние аккордиона для конкретного сотрудника
+  const toggleAccordion = (e: React.MouseEvent, employee_id: number) => {
+    e.stopPropagation(); // предотвратить всплытие клика к li
+    setExpandedEmployeeIds((prev) =>
+      prev.includes(employee_id)
+        ? prev.filter((id) => id !== employee_id)
+        : [...prev, employee_id]
+    );
+  };
+
   return (
     <Modal onClose={onClose}>
       <h3>Редактировать услугу</h3>
+
       <div className={styles.formGroup}>
         <label>Название:</label>
         <input
@@ -114,6 +130,7 @@ export const EditServiceModal: React.FC<Props> = ({
           onChange={(e) => setName(e.target.value)}
         />
       </div>
+
       <div className={styles.formGroup}>
         <label>Описание:</label>
         <textarea
@@ -121,6 +138,7 @@ export const EditServiceModal: React.FC<Props> = ({
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
+
       <div className={styles.formGroup}>
         <label>Цена:</label>
         <input
@@ -129,6 +147,7 @@ export const EditServiceModal: React.FC<Props> = ({
           onChange={(e) => setPrice(parseFloat(e.target.value))}
         />
       </div>
+
       <div className={styles.formGroup}>
         <label>Выбранные мастера:</label>
         <div className={styles.selectedList}>
@@ -156,17 +175,53 @@ export const EditServiceModal: React.FC<Props> = ({
                   (e) => e.employee_id === emp.employee_id
                 )
             )
-            .map((emp) => (
-              <li
-                key={emp.employee_id}
-                className={styles.employeeItem}
-                onClick={() => handleAddEmployee(emp)}
-              >
-                {emp.name} {emp.surname} {emp.patronymic}
-              </li>
-            ))}
+            .map((emp) => {
+              const isExpanded = expandedEmployeeIds.includes(emp.employee_id);
+
+              return (
+                <li
+                  key={emp.employee_id}
+                  className={styles.employeeItem}
+                  onClick={() => handleAddEmployee(emp)}
+                >
+                  <div className={styles.itemHeader}>
+                    <span>
+                      {emp.name} {emp.surname}
+                    </span>
+                    <Button
+                      className={styles.moreInfoBtn}
+                      onClick={(e: any) => toggleAccordion(e, emp.employee_id)}
+                    >
+                      {isExpanded ? "Скрыть" : "Подробнее"}
+                    </Button>
+                  </div>
+
+                  {isExpanded && (
+                    <div className={styles.accordionContent}>
+                      <p>
+                        <strong>ID:</strong> {emp.employee_id}
+                      </p>
+                      <p>
+                        <strong>Имя:</strong> {emp.name}
+                      </p>
+                      <p>
+                        <strong>Фамилия:</strong> {emp.surname}
+                      </p>
+                      <p>
+                        <strong>Отчество:</strong> {emp.patronymic}
+                      </p>{" "}
+                      <p>
+                        <strong>Дата регистрации:</strong>{" "}
+                        {emp.registration_date}
+                      </p>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
         </ul>
       </div>
+
       <div className={styles.modalActions}>
         <Button onClick={handleUpdateService} disabled={loading}>
           {loading ? "Сохранение..." : "Сохранить"}

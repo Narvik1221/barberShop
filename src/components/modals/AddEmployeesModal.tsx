@@ -1,3 +1,5 @@
+// src/components/AddEmployeesModal.tsx
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Modal from "./Modal";
@@ -18,11 +20,13 @@ interface Employee {
   patronymic: string;
   email: string;
   assigned: boolean;
+  registration_date: string;
 }
 
 export const AddEmployeesModal: React.FC<Props> = ({ salonId, onClose }) => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [expandedEmployeeIds, setExpandedEmployeeIds] = useState<number[]>([]);
 
   useEffect(() => {
     fetchEmployees();
@@ -46,6 +50,15 @@ export const AddEmployeesModal: React.FC<Props> = ({ salonId, onClose }) => {
     );
   };
 
+  const toggleAccordion = (e: React.MouseEvent, employeeId: number) => {
+    e.stopPropagation();
+    setExpandedEmployeeIds((prev) =>
+      prev.includes(employeeId)
+        ? prev.filter((id) => id !== employeeId)
+        : [...prev, employeeId]
+    );
+  };
+
   const handleAttach = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -66,22 +79,56 @@ export const AddEmployeesModal: React.FC<Props> = ({ salonId, onClose }) => {
       <h3>Прикрепить сотрудников</h3>
       <ul className={styles.employeeList}>
         {employees.length > 0 ? (
-          employees.map((emp) => (
-            <li key={emp.id} className={styles.employeeItem}>
-              <label className={styles.label}>
-                <input
-                  type="checkbox"
-                  checked={selectedIds.includes(emp.id)}
-                  onChange={() => toggleSelect(emp.id)}
-                  disabled={emp.assigned}
-                />
-                <div className={styles.label_text}>
-                  {emp.name} <br /> {emp.surname} <br />
-                  {emp.patronymic}
+          employees.map((emp) => {
+            const isExpanded = expandedEmployeeIds.includes(emp.id);
+            const isChecked = selectedIds.includes(emp.id);
+
+            return (
+              <li key={emp.id} className={styles.employeeItem}>
+                <div className={styles.itemHeader}>
+                  <label className={styles.label}>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => toggleSelect(emp.id)}
+                      disabled={emp.assigned}
+                    />
+                    <span className={styles.label_text}>
+                      {emp.name} <br /> {emp.surname}
+                    </span>
+                  </label>
+                  <Button
+                    className={styles.moreInfoBtn}
+                    onClick={(e: React.MouseEvent) =>
+                      toggleAccordion(e, emp.id)
+                    }
+                  >
+                    {isExpanded ? "Скрыть" : "Подробнее"}
+                  </Button>
                 </div>
-              </label>
-            </li>
-          ))
+
+                {isExpanded && (
+                  <div className={styles.accordionContent}>
+                    <p>
+                      <strong>ID:</strong> {emp.id}
+                    </p>
+                    <p>
+                      <strong>Имя:</strong> {emp.name}
+                    </p>
+                    <p>
+                      <strong>Фамилия:</strong> {emp.surname}
+                    </p>
+                    <p>
+                      <strong>Отчество:</strong> {emp.patronymic}
+                    </p>
+                    <p>
+                      <strong>Дата регистрации:</strong> {emp.registration_date}
+                    </p>
+                  </div>
+                )}
+              </li>
+            );
+          })
         ) : (
           <h3>Свободных сотрудников нет</h3>
         )}

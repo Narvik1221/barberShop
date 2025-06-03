@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getSalonById, getServicesBySalon } from "../../api/salonApi";
 import axios from "axios";
@@ -6,7 +6,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "./SalonDetail.module.scss";
 import { Button } from "../Button/Button";
-import { AuthContext } from "../../context/AuthContext";
 
 const SERVER_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -16,6 +15,7 @@ interface Employee {
   surname: string;
   employee_id: number;
   patronymic: string;
+  master_registration_date: string;
 }
 
 interface Service {
@@ -52,6 +52,7 @@ const SalonDetail = () => {
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [bookedSlots, setBookedSlots] = useState<BookingSlot[]>([]);
   const [error, setError] = useState("");
+  const [expandedEmployeeIds, setExpandedEmployeeIds] = useState<number[]>([]);
 
   const selectedService = services.find(
     (s) => s.service_id.toString() === selectedServiceId
@@ -119,6 +120,7 @@ const SalonDetail = () => {
       setSelectedEmployeeId("");
       setSelectedDate(null);
       setSelectedTime("");
+      setError("");
     } catch (err: any) {
       console.error("Ошибка при создании записи:", err.response?.data?.error);
       setError("Не удалось создать запись. Проверьте введенные данные.");
@@ -158,6 +160,15 @@ const SalonDetail = () => {
     selectedDate &&
     timeOptions.filter((time) => !isTimeBooked(selectedDate, time));
 
+  const toggleAccordion = (e: React.MouseEvent, employeeId: number) => {
+    e.stopPropagation();
+    setExpandedEmployeeIds((prev) =>
+      prev.includes(employeeId)
+        ? prev.filter((id) => id !== employeeId)
+        : [...prev, employeeId]
+    );
+  };
+
   if (!salon) return <p>Загрузка...</p>;
 
   return (
@@ -193,20 +204,65 @@ const SalonDetail = () => {
 
               {selectedService && selectedService.employees.length > 0 && (
                 <div className={styles.field}>
-                  <label htmlFor="employee">Выберите специалиста:</label>
-                  <select
-                    id="employee"
-                    value={selectedEmployeeId}
-                    onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                    required
-                  >
-                    <option value="">-- Выберите специалиста --</option>
-                    {selectedService.employees.map((emp) => (
-                      <option key={emp.id} value={emp.employee_id}>
-                        {emp.name} {emp.surname} {emp.patronymic}
-                      </option>
-                    ))}
-                  </select>
+                  <label>Выберите специалиста:</label>
+                  <ul className={styles.employeeList}>
+                    {selectedService.employees.map((emp) => {
+                      const isExpanded = expandedEmployeeIds.includes(emp.id);
+                      const isChecked =
+                        selectedEmployeeId === emp.employee_id.toString();
+                      console.log(emp);
+                      return (
+                        <li key={emp.id} className={styles.employeeItem}>
+                          <div className={styles.itemHeader}>
+                            <label className={styles.label}>
+                              <input
+                                type="radio"
+                                name="employee"
+                                value={emp.employee_id}
+                                checked={isChecked}
+                                onChange={() =>
+                                  setSelectedEmployeeId(
+                                    emp.employee_id.toString()
+                                  )
+                                }
+                                required
+                              />
+                              <span className={styles.label_text}>
+                                {emp.name} {emp.surname}
+                              </span>
+                            </label>
+                            <Button
+                              className={styles.moreInfoBtn}
+                              onClick={(e: React.MouseEvent) => {
+                                e.preventDefault();
+                                toggleAccordion(e, emp.id);
+                              }}
+                            >
+                              {isExpanded ? "Скрыть" : "Подробнее"}
+                            </Button>
+                          </div>
+
+                          {isExpanded && (
+                            <div className={styles.accordionContent}>
+                              <p>
+                                <strong>Имя:</strong> {emp.name}
+                              </p>
+                              <p>
+                                <strong>Фамилия:</strong> {emp.surname}
+                              </p>
+                              <p>
+                                <strong>Отчество:</strong> {emp.patronymic}
+                              </p>
+                              <p>
+                                <strong>Дата регистрации:</strong>
+                                {emp.master_registration_date}
+                              </p>
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
               )}
 

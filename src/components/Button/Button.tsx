@@ -7,7 +7,7 @@ interface ButtonProps {
   children: React.ReactNode;
   myType?: "default" | "delete";
   className?: string;
-  onClick?: () => void;
+  onClick?: any;
   type?: any;
   disabled?: any;
 }
